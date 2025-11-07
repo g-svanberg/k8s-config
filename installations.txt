@@ -1,8 +1,8 @@
 # Enable metallb for load balancing (this will handle your external IP) on server
-microk8s enable metallb
+enable metallb
 
 # Enable ingress controller on server
-microk8s enable ingress
+enable ingress
 
 # Check that all pods are running
 kubectl get pods -A
@@ -10,7 +10,7 @@ kubectl get pods -A
 # Check that ingress controller is running
 kubectl get pods -n ingress
 
-# Check metallb status
+# Check metallb status should be 2 pods controller and speaker
 kubectl get pods -n metallb-system
 
 # Check if the ingress controller service got the external IP
@@ -20,23 +20,16 @@ kubectl get svc -n ingress
 kubectl apply -f whoami-complete.yaml
 
 
-
-# Enable ingress (also ensure metallb is already enabled if you want a LoadBalancer IP later)
-microk8s enable ingress
-
-# See what resources appeared in the 'ingress' namespace
-microk8s kubectl get all -n ingress
-
 # Specifically look at the controller DaemonSet
-microk8s kubectl get daemonset -n ingress
-microk8s kubectl describe daemonset ingress-nginx-controller -n ingress | grep -i 'hostnetwork\|image'
+kubectl get daemonset -n ingress
+kubectl describe daemonset ingress-nginx-controller -n ingress | grep -i 'hostnetwork\|image'
 
 # List the Service(s) it created
-microk8s kubectl get svc -n ingress
-microk8s kubectl describe svc ingress-nginx-controller -n ingress
+kubectl get svc -n ingress
+kubectl describe svc ingress-nginx-controller -n ingress
 
 # Confirm if it’s using hostNetwork (common for MicroK8s)
-microk8s kubectl get pods -n ingress -o yaml | grep -m1 -i hostNetwork
+kubectl get pods -n ingress -o yaml | grep -m1 -i hostNetwork
 
 # Check arguments passed to the controller
-microk8s kubectl logs -n ingress -l app=ingress-nginx --tail=50 | grep -- '--ingress-class'
+kubectl logs -n ingress -l app=ingress-nginx --tail=50 | grep -- '--ingress-class'
