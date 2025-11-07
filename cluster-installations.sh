@@ -20,10 +20,6 @@ kubectl get pods -n metallb-system
 # Check if the ingress controller service got the external IP
 kubectl get svc -n ingress
 
-# Deploy all whoami components at once
-kubectl apply -f whoami-complete.yaml
-
-
 # Specifically look at the controller DaemonSet
 kubectl get daemonset -n ingress
 kubectl describe daemonset ingress-nginx-controller -n ingress | grep -i 'hostnetwork\|image'
@@ -32,7 +28,7 @@ kubectl describe daemonset ingress-nginx-controller -n ingress | grep -i 'hostne
 kubectl get svc -n ingress
 kubectl describe svc ingress-nginx-controller -n ingress
 
-# Confirm if it’s using hostNetwork (common for MicroK8s)
+# Confirm if it’s using hostNetwork
 kubectl get pods -n ingress -o yaml | grep -m1 -i hostNetwork
 
 # Check arguments passed to the controller
