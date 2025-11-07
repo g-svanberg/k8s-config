@@ -3,10 +3,13 @@
 # IPAddressPool and L2Advertisement with that range.
 # Pool will only have one IP which is where port 80 and 443 are forearded from FW
 # And is blocked from the DHCP internal server
-kubectl microk8s enable metallb:192.168.50.10-192.168.50.10
+# Run an node1
+# Needed 2 IP's in the pool otherwise metallb never gave up an IP to ingress
+# However *.10 is pinned in the ingress manifest
+microk8s enable metallb:192.168.50.09-192.168.50.10
 
 # Enable ingress controller on node1
-kubectl microk8s enable ingress
+microk8s enable ingress
 
 # Check that ingress controller is running
 kubectl get pods -n ingress

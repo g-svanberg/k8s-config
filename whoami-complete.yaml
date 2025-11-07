@@ -56,7 +56,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: whoami.local
+  - host: whoami.svanbergs.net
     http:
       paths:
       - path: /
