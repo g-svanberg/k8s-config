@@ -1,14 +1,18 @@
-# Enable metallb for load balancing (this will handle your external IP) on server
-enable metallb
+# Enable metallb for load balancing on cluster
+# This will create 2 daemon sets controller and speaker and add a
+# IPAddressPool and L2Advertisement with that range.
+# Pool will only have one IP which is where port 80 and 443 are forearded from FW
+kubectl microk8s enable metallb:192.168.50.10-192.168.50.10
 
-# Enable ingress controller on server
-enable ingress
-
-# Check that all pods are running
-kubectl get pods -A
+# Enable ingress controller on node1
+kubectl microk8s enable ingress
 
 # Check that ingress controller is running
 kubectl get pods -n ingress
+
+# Must patch ingress controller to use metallb virtual IP
+# Default seems to be HostPort which does fly at all
+kubectl patch svc ingress-nginx-controller -n ingress -p '{"spec":{"type":"LoadBalancer"}}'
 
 # Check metallb status should be 2 pods controller and speaker
 kubectl get pods -n metallb-system

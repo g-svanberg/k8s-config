@@ -66,13 +66,3 @@ spec:
             name: whoami-service
             port:
               number: 80
-  # Alternative rule without host (for testing with IP only)
-  - http:
-      paths:
-      - path: /whoami
-        pathType: Prefix
-        backend:
-          service:
-            name: whoami-service
-            port:
-              number: 80
