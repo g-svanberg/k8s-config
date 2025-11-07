@@ -1,25 +1,42 @@
-# Enable metallb for load balancing (this will handle your external IP)
+# Enable metallb for load balancing (this will handle your external IP) on server
 microk8s enable metallb
 
-# Enable ingress controller
+# Enable ingress controller on server
 microk8s enable ingress
 
 # Check that all pods are running
-microk8s kubectl get pods -A
+kubectl get pods -A
 
 # Check that ingress controller is running
-microk8s kubectl get pods -n ingress
+kubectl get pods -n ingress
 
 # Check metallb status
-microk8s kubectl get pods -n metallb-system
+kubectl get pods -n metallb-system
 
 # Check if the ingress controller service got the external IP
-microk8s kubectl get svc -n ingress
+kubectl get svc -n ingress
 
 # Deploy all whoami components at once
-microk8s kubectl apply -f whoami-complete.yaml
+kubectl apply -f whoami-complete.yaml
 
-# Or deploy individually
-microk8s kubectl apply -f whoami-deployment.yaml
-microk8s kubectl apply -f whoami-service.yaml
-microk8s kubectl apply -f whoami-ingress.yaml
+
+
+# Enable ingress (also ensure metallb is already enabled if you want a LoadBalancer IP later)
+microk8s enable ingress
+
+# See what resources appeared in the 'ingress' namespace
+microk8s kubectl get all -n ingress
+
+# Specifically look at the controller DaemonSet
+microk8s kubectl get daemonset -n ingress
+microk8s kubectl describe daemonset ingress-nginx-controller -n ingress | grep -i 'hostnetwork\|image'
+
+# List the Service(s) it created
+microk8s kubectl get svc -n ingress
+microk8s kubectl describe svc ingress-nginx-controller -n ingress
+
+# Confirm if it’s using hostNetwork (common for MicroK8s)
+microk8s kubectl get pods -n ingress -o yaml | grep -m1 -i hostNetwork
+
+# Check arguments passed to the controller
+microk8s kubectl logs -n ingress -l app=ingress-nginx --tail=50 | grep -- '--ingress-class'
