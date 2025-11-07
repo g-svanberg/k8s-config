@@ -1,0 +1,78 @@
+# Deploy all whoami components at once
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whoami
+  namespace: default
+  labels:
+    app: whoami
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: whoami
+  template:
+    metadata:
+      labels:
+        app: whoami
+    spec:
+      containers:
+      - name: whoami
+        image: traefik/whoami:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "50m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami-service
+  namespace: default
+  labels:
+    app: whoami
+spec:
+  selector:
+    app: whoami
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: whoami-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: whoami.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: whoami-service
+            port:
+              number: 80
+  # Alternative rule without host (for testing with IP only)
+  - http:
+      paths:
+      - path: /whoami
+        pathType: Prefix
+        backend:
+          service:
+            name: whoami-service
+            port:
+              number: 80

@@ -1,0 +1,25 @@
+# Enable metallb for load balancing (this will handle your external IP)
+microk8s enable metallb
+
+# Enable ingress controller
+microk8s enable ingress
+
+# Check that all pods are running
+microk8s kubectl get pods -A
+
+# Check that ingress controller is running
+microk8s kubectl get pods -n ingress
+
+# Check metallb status
+microk8s kubectl get pods -n metallb-system
+
+# Check if the ingress controller service got the external IP
+microk8s kubectl get svc -n ingress
+
+# Deploy all whoami components at once
+microk8s kubectl apply -f whoami-complete.yaml
+
+# Or deploy individually
+microk8s kubectl apply -f whoami-deployment.yaml
+microk8s kubectl apply -f whoami-service.yaml
+microk8s kubectl apply -f whoami-ingress.yaml
