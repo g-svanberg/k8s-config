@@ -2,6 +2,7 @@
 # This will create 2 daemon sets controller and speaker and add a
 # IPAddressPool and L2Advertisement with that range.
 # Pool will only have one IP which is where port 80 and 443 are forearded from FW
+# And is blocked from the DHCP internal server
 kubectl microk8s enable metallb:192.168.50.10-192.168.50.10
 
 # Enable ingress controller on node1
@@ -10,8 +11,8 @@ kubectl microk8s enable ingress
 # Check that ingress controller is running
 kubectl get pods -n ingress
 
-# Must patch ingress controller to use metallb virtual IP
-# Default seems to be HostPort which does fly at all
+# Must patch ingress controller to use metallb virtual IP = LoadBalancer 
+# seems to default to ClusterIP/HostPort which does not fly at all
 kubectl patch svc ingress-nginx-controller -n ingress -p '{"spec":{"type":"LoadBalancer"}}'
 
 # Check metallb status should be 2 pods controller and speaker
