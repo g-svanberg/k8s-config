@@ -5,8 +5,8 @@
 # And is blocked from the DHCP internal server
 # Run an node1
 # Needed 2 IP's in the pool otherwise metallb never gave up an IP to ingress
-# However *.10 is pinned in the ingress manifest
-microk8s enable metallb:192.168.50.09-192.168.50.10
+# However *.11 is pinned in the ingress manifest
+microk8s enable metallb:192.168.50.10-192.168.50.13
 
 # Enable ingress controller on node1
 microk8s enable ingress
