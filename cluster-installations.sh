@@ -14,10 +14,6 @@ microk8s enable ingress
 # Check that ingress controller is running
 kubectl get pods -n ingress
 
-# Must patch ingress controller to use metallb virtual IP = LoadBalancer 
-# seems to default to ClusterIP/HostPort which does not fly at all
-kubectl patch svc ingress-nginx-controller -n ingress -p '{"spec":{"type":"LoadBalancer"}}'
-
 # Check metallb status should be 2 pods controller and speaker
 kubectl get pods -n metallb-system
 
@@ -32,8 +28,5 @@ kubectl describe daemonset ingress-nginx-controller -n ingress | grep -i 'hostne
 kubectl get svc -n ingress
 kubectl describe svc ingress-nginx-controller -n ingress
 
-# Confirm if it’s using hostNetwork
-kubectl get pods -n ingress -o yaml | grep -m1 -i hostNetwork
-
-# Check arguments passed to the controller
-kubectl logs -n ingress -l app=ingress-nginx --tail=50 | grep -- '--ingress-class'
+# To test cert-manager deployed on whoami service. From outside of home netork
+curl -vk https://whoami.svanbergs.net/

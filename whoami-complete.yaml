@@ -52,9 +52,13 @@ metadata:
   name: whoami-ingress
   namespace: default
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: "letsencrypt"
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - whoami.svanbergs.net
+    secretName: whoami-tls
   rules:
   - host: whoami.svanbergs.net
     http:
